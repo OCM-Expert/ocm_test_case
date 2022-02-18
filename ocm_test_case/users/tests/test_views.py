@@ -8,14 +8,10 @@ from django.http import HttpRequest, HttpResponseRedirect
 from django.test import RequestFactory
 from django.urls import reverse
 
+from ocm_test_case.users import views
 from ocm_test_case.users.forms import UserAdminChangeForm
 from ocm_test_case.users.models import User
 from ocm_test_case.users.tests.factories import UserFactory
-from ocm_test_case.users.views import (
-    UserRedirectView,
-    UserUpdateView,
-    user_detail_view,
-)
 
 pytestmark = pytest.mark.django_db
 
@@ -33,7 +29,7 @@ class TestUserUpdateView:
         return None
 
     def test_get_success_url(self, user: User, rf: RequestFactory):
-        view = UserUpdateView()
+        view = views.UserUpdateView()
         request = rf.get("/fake-url/")
         request.user = user
 
@@ -42,7 +38,7 @@ class TestUserUpdateView:
         assert view.get_success_url() == f"/users/{user.username}/"
 
     def test_get_object(self, user: User, rf: RequestFactory):
-        view = UserUpdateView()
+        view = views.UserUpdateView()
         request = rf.get("/fake-url/")
         request.user = user
 
@@ -51,7 +47,7 @@ class TestUserUpdateView:
         assert view.get_object() == user
 
     def test_form_valid(self, user: User, rf: RequestFactory):
-        view = UserUpdateView()
+        view = views.UserUpdateView()
         request = rf.get("/fake-url/")
 
         # Add the session/message middleware to the request
@@ -72,7 +68,7 @@ class TestUserUpdateView:
 
 class TestUserRedirectView:
     def test_get_redirect_url(self, user: User, rf: RequestFactory):
-        view = UserRedirectView()
+        view = views.UserRedirectView()
         request = rf.get("/fake-url")
         request.user = user
 
@@ -86,7 +82,7 @@ class TestUserDetailView:
         request = rf.get("/fake-url/")
         request.user = UserFactory()
 
-        response = user_detail_view(request, username=user.username)
+        response = views.user_detail_view(request, username=user.username)
 
         assert response.status_code == 200
 
@@ -94,7 +90,7 @@ class TestUserDetailView:
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
 
-        response = user_detail_view(request, username=user.username)
+        response = views.user_detail_view(request, username=user.username)
         login_url = reverse(settings.LOGIN_URL)
 
         assert isinstance(response, HttpResponseRedirect)
