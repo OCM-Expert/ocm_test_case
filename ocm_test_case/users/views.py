@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, RedirectView, UpdateView
+from django.views.generic import DetailView, RedirectView, UpdateView, TemplateView, FormView
+
+from ocm_test_case.users.forms import UserEmailForm
 
 User = get_user_model()
 
@@ -46,3 +48,29 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+class UserEmailWriteView(LoginRequiredMixin, FormView):
+    template_name = "users/write_message.html"
+    form_class = UserEmailForm
+    success_url = reverse_lazy('users:success')
+
+    def form_valid(self, form):
+        form.send()
+        return super().form_valid(form)
+
+    def get_form_kwargs(self):
+
+        kwargs = super(UserEmailWriteView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+
+user_write_message_view = UserEmailWriteView.as_view()
+
+
+class UserEmailSenSuccessView(LoginRequiredMixin, TemplateView):
+    template_name = "users/success_email.html"
+
+
+user_success_message_view = UserEmailSenSuccessView.as_view()
