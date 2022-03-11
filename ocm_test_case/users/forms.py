@@ -86,3 +86,9 @@ class UserEmailForm(forms.Form):
 
         UserEmails.objects.create(destination=to_email, status=bool(answ),
                                   mes_title=subject, mes_text=msg, user_id=self.request.user)
+
+
+class UserEmailsListForm(forms.Form):
+    class Meta:
+        model = UserEmails
+        fields = ["destination", 'mes_title', 'mes_text', 'status']

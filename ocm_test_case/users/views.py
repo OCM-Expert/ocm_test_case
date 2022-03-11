@@ -3,9 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, RedirectView, UpdateView, TemplateView, FormView
+from django.views.generic import DetailView, RedirectView, UpdateView, TemplateView, FormView, ListView
 
-from ocm_test_case.users.forms import UserEmailForm
+from ocm_test_case.users.forms import UserEmailForm, UserEmailsListForm
+from ocm_test_case.users.models import UserEmails
 
 User = get_user_model()
 
@@ -74,3 +75,24 @@ class UserEmailSenSuccessView(LoginRequiredMixin, TemplateView):
 
 
 user_success_message_view = UserEmailSenSuccessView.as_view()
+
+
+class UserEmailListView(LoginRequiredMixin, ListView):
+
+    model = User
+    slug_field = "username"
+    slug_url_kwarg = "username"
+    template_name = "users/email_list.html"
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        return UserEmails.objects.filter(user_id__username=username)
+
+    def get_context_data(self, **kwargs):
+        context = super(UserEmailListView, self).get_context_data(**kwargs)
+        email_list = self.get_queryset()
+        context.update({'emails_list': email_list})
+        return context
+
+
+user_email_list_view = UserEmailListView.as_view()

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ user.username }} - email{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<h1>Emails list</h1>
+<p>Here a emails list</p>
+<div class="container">
+  {% for email in emails_list %}
+    <div class="row" style="margin: 16px;">
+      <div class="col-sm-12">
+        {{ email.destination }}
+      </div>
+      <div class="col-sm-12">
+        {{ email.mes_title }}
+      </div>
+      <div class="col-sm-12">
+        {{ email.status }}
+      </div>
+    </div>
+    <div class="row">
+      {{ email.mes_text }}
+    </div>
+
+  {% endfor %}
+</div>
+{% endblock %}

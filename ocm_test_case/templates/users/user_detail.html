@@ -20,6 +20,11 @@
       <a class="btn btn-primary" href="{% url 'users:write_message' %}" role="button">Write E-mail</a>
     </div>
   </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <a class="nav-link" href="{% url 'users:email_list' request.user.username  %}">My emails</a>
+    </div>
+  </div>
 
 {% if object == request.user %}
 <!-- Action buttons -->
