@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView, TemplateView, FormView, ListView
-from django_filters import rest_framework as filters
 
-from ocm_test_case.users.filters import EmailFilter
-from ocm_test_case.users.forms import UserEmailForm, UserEmailsListForm
+
+from ocm_test_case.users.forms import UserEmailForm, UserEmailEditForm
 from ocm_test_case.users.models import UserEmails
 
 User = get_user_model()
@@ -99,3 +99,30 @@ class UserEmailListView(LoginRequiredMixin, ListView):
 
 
 user_email_list_view = UserEmailListView.as_view()
+
+
+class UserEmailEditView(LoginRequiredMixin, TemplateView):
+
+    template_name = "users/email_edit.html"
+    # form_class = UserEmailEditForm
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        pk = self.kwargs['pk']
+
+        return get_object_or_404(UserEmails, pk=pk, user_id__username=username)
+
+    def get_context_data(self, **kwargs):
+        context = super(UserEmailEditView, self).get_context_data(**kwargs)
+        email = self.get_queryset()
+        form = UserEmailEditForm(initial={
+            'destination': email.destination,
+            'mes_title': email.mes_title,
+            'mes_text': email.mes_text,
+            'status': email.status,
+        })
+        context.update({'email': email, 'form': form})
+        return context
+
+
+user_email_edit_view = UserEmailEditView.as_view()

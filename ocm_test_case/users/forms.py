@@ -92,3 +92,10 @@ class UserEmailsListForm(forms.Form):
     class Meta:
         model = UserEmails
         fields = ["destination", 'mes_title', 'mes_text', 'status']
+
+
+class UserEmailEditForm(forms.ModelForm):
+
+    class Meta:
+        model = UserEmails
+        fields = ["destination", 'mes_title', 'mes_text', 'status']

@@ -18,7 +18,7 @@
   {% for email in emails_list %}
     <div class="row" style="margin: 16px; width: 50%;">
       <div class="col-sm-12" style="">
-        <span style="margin-right: 8px">{{ email.destination }}</span>
+        <a class="btn btn-primary" href="{% url 'users:email_edit' username=request.user.username pk=email.id %}" role="button" style="margin-right: 8px">{{ email.destination }}</a>
         <div>
           <span style="margin-right: 8px; ">Title: {{ email.mes_title }}</span>
         {% if email.status %}
