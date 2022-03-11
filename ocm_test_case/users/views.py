@@ -4,7 +4,9 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView, TemplateView, FormView, ListView
+from django_filters import rest_framework as filters
 
+from ocm_test_case.users.filters import EmailFilter
 from ocm_test_case.users.forms import UserEmailForm, UserEmailsListForm
 from ocm_test_case.users.models import UserEmails
 
@@ -86,7 +88,8 @@ class UserEmailListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         username = self.kwargs['username']
-        return UserEmails.objects.filter(user_id__username=username)
+        query = self.request.GET.get('q', '')
+        return UserEmails.objects.filter(user_id__username=username, destination__icontains=query)
 
     def get_context_data(self, **kwargs):
         context = super(UserEmailListView, self).get_context_data(**kwargs)
