@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView, TemplateView, FormView, ListView
@@ -101,10 +101,21 @@ class UserEmailListView(LoginRequiredMixin, ListView):
 user_email_list_view = UserEmailListView.as_view()
 
 
-class UserEmailEditView(LoginRequiredMixin, TemplateView):
+class UserEmailEditView(LoginRequiredMixin, FormView):
 
     template_name = "users/email_edit.html"
-    # form_class = UserEmailEditForm
+    form_class = UserEmailEditForm
+    model = UserEmails
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        id = User.objects.get(username=self.kwargs['username']).id
+        self.object.user_id_id = id
+        self.object.pk = self.kwargs['pk']
+        self.object.save()
+
+        return super().form_valid(form)
 
     def get_queryset(self):
         username = self.kwargs['username']
