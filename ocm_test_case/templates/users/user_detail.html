@@ -17,7 +17,8 @@
   </div>
   <div class="row">
     <div class="col-sm-12">
-      <a class="btn btn-primary" href="{% url 'users:write_message' %}" role="button">Write E-mail</a>
+      <a class="btn btn-primary" href="{% url 'users:write_message' %}" role="button">Send E-mail</a>
+      <a class="btn btn-primary" href="{% url 'users:email_create' request.user.username %}" role="button">Create E-mail</a>
     </div>
   </div>
   <div class="row">

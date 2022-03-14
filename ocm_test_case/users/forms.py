@@ -99,3 +99,28 @@ class UserEmailEditForm(forms.ModelForm):
     class Meta:
         model = UserEmails
         fields = ["destination", 'mes_title', 'mes_text', 'status']
+
+
+class UserEmailCreateForm(forms.Form):
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(UserEmailCreateForm, self).__init__(*args, **kwargs)
+
+    def get_info(self):
+        """
+        Method that returns formatted information
+        :return: subject, msg
+        """
+        cl_data = super().clean()
+        to_email = cl_data.get('email')
+        msg = cl_data.get('message')
+
+        return msg, to_email
+
+    def send(self):
+        msg, to_email = self.get_info()
+        UserEmails.objects.create(destination=to_email, status=False,
+                                  mes_text=msg, user_id=self.request.user)

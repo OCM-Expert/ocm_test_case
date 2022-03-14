@@ -8,6 +8,7 @@ from ocm_test_case.users.views import (
     user_success_message_view,
     user_email_list_view,
     user_email_edit_view,
+    user_email_create_view,
 )
 
 app_name = "users"
@@ -19,4 +20,5 @@ urlpatterns = [
     path("<str:username>/", view=user_detail_view, name="detail"),
     path("<str:username>/email-list", view=user_email_list_view, name="email_list"),
     path("<str:username>/email-edit/<int:pk>", view=user_email_edit_view, name="email_edit"),
+    path("<str:username>/email-create", view=user_email_create_view, name="email_create"),
 ]

@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView, TemplateView, FormView, ListView
 
 
-from ocm_test_case.users.forms import UserEmailForm, UserEmailEditForm
+from ocm_test_case.users.forms import UserEmailForm, UserEmailEditForm, UserEmailCreateForm
 from ocm_test_case.users.models import UserEmails
 
 User = get_user_model()
@@ -137,3 +137,22 @@ class UserEmailEditView(LoginRequiredMixin, FormView):
 
 
 user_email_edit_view = UserEmailEditView.as_view()
+
+
+class UserEmailCreateView(LoginRequiredMixin, FormView):
+    template_name = "users/email_create.html"
+    form_class = UserEmailCreateForm
+    success_url = reverse_lazy('users:success')
+
+    def form_valid(self, form):
+        form.send()
+        return super().form_valid(form)
+
+    def get_form_kwargs(self):
+
+        kwargs = super(UserEmailCreateView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+
+user_email_create_view = UserEmailCreateView.as_view()
