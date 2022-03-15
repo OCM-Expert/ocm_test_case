@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField
+from django.db.models import CharField, Model, ForeignKey, CASCADE, TextField, BooleanField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -24,3 +24,14 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"username": self.username})
+
+
+class UserEmails(Model):
+    user_id = ForeignKey(User, on_delete=CASCADE)
+    destination = CharField(_("Destination"), max_length=64)
+    mes_title = CharField(_("Title"), blank=True, max_length=255)
+    mes_text = TextField(_("Message text"), blank=True)
+    status = BooleanField(_("Delivered status"), default=True)
+
+    def __repr__(self):
+        return f'{self.mes_title} | {self.destination}'

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ user.username }} - email{% endblock %}
+
+{% block content %}
+<h1>Emails list</h1>
+<p>Here a emails list</p>
+<div class="container">
+  <div class="col-sm-12" style="">
+    <form action="{% url 'users:email_list' request.user.username %}" method="get">
+      <input name="q" type="text" placeholder="Search for email...">
+    </form>
+    <a class="nav-link" href="{% url 'users:email_list' request.user.username  %}">All</a>
+  </div>
+</div>
+<div class="container">
+  {% for email in emails_list %}
+    <div class="row" style="margin: 16px; width: 50%;">
+      <div class="col-sm-12" style="">
+        <a class="btn btn-primary" href="{% url 'users:email_edit' username=request.user.username pk=email.id %}" role="button" style="margin-right: 8px">{{ email.destination }}</a>
+        <div>
+          <span style="margin-right: 8px; ">Title: {{ email.mes_title }}</span>
+        {% if email.status %}
+          <span style="margin-right: 8px; color: green; float: right;">delivered</span>
+        {% else %}
+          <span style="margin-right: 8px; color: red; float: right;">not delivered</span>
+        {% endif %}
+        </div>
+      </div>
+      <div class="col-sm-4" style="margin-top: 8px; padding: 8px; border-top: 1px solid; border-bottom: 1px solid;">
+        {{ email.mes_text }}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
